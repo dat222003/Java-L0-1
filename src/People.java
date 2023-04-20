@@ -3,10 +3,10 @@ public abstract class People {
     private Integer id;
     private String name;
     private String dateOfBirth;
-    private Double height;
-    private Double weight;
+    private Float height;
+    private Float weight;
 
-    public People(String name, String dateOfBirth, Double height, Double weight) {
+    public People(String name, String dateOfBirth, Float height, Float weight) {
         this.id = nextId;
         nextId++;
         if (name == null) throw new IllegalArgumentException("name cannot be null.");
@@ -42,19 +42,19 @@ public abstract class People {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Double getHeight() {
+    public Float getHeight() {
         return height;
     }
 
-    public void setHeight(Double height) {
+    public void setHeight(Float height) {
         this.height = height;
     }
 
-    public Double getWeight() {
+    public Float getWeight() {
         return weight;
     }
 
-    public void setWeight(Double weight) {
+    public void setWeight(Float weight) {
         this.weight = weight;
     }
 

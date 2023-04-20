@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -6,10 +7,10 @@ public class Student extends People{
     private static final List<String> assignedIds = new ArrayList<>();
     private String studentId;
     private String university;
-    private Date startDate;
-    private Double GPA;
+    private LocalDate startDate;
+    private Float GPA;
 
-    public Student(String name, String dateOfBirth, Double height, Double weight, String studentId, String university, Date startDate, Double GPA) {
+    public Student(String name, String dateOfBirth, Float height, Float weight, String studentId, String university, LocalDate startDate, Float GPA) {
         super(name, dateOfBirth, height, weight);
         if (studentId == null) throw new IllegalArgumentException("studentID cannot be null.");
 
@@ -42,19 +43,19 @@ public class Student extends People{
         this.university = university;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Double getGPA() {
+    public Float getGPA() {
         return GPA;
     }
 
-    public void setGPA(Double GPA) {
+    public void setGPA(Float GPA) {
         this.GPA = GPA;
     }
 
