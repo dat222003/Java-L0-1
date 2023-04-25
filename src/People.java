@@ -1,22 +1,27 @@
-public abstract class People {
+import java.time.LocalDate;
+
+public class People {
     private static int nextId = 1;
     private Integer id;
     private String name;
-    private String dateOfBirth;
+    private LocalDate dateOfBirth;
+    private String address;
     private Float height;
     private Float weight;
 
-    public People(String name, String dateOfBirth, Float height, Float weight) {
+    public People(String name, LocalDate dateOfBirth, String address, Float height, Float weight) {
         this.id = nextId;
         nextId++;
-        if (name == null) throw new IllegalArgumentException("name cannot be null.");
-        if (dateOfBirth == null) throw new IllegalArgumentException("date of birth cannot be null.");
         this.name = name;
         this.dateOfBirth = dateOfBirth;
+        this.address = address;
         this.height = height;
         this.weight = weight;
     }
 
+    public static void DecreaseAutoIncrementId() {
+        nextId--;
+    }
 
     public Integer getId() {
         return id;
@@ -34,12 +39,20 @@ public abstract class People {
         this.name = name;
     }
 
-    public String getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(String dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Float getHeight() {
@@ -62,10 +75,11 @@ public abstract class People {
     public String toString() {
         return "People{" +
                 "id=" + id +
-                ", Name='" + name + '\'' +
-                ", DoB='" + dateOfBirth + '\'' +
-                ", Height=" + height +
-                ", Weight=" + weight +
+                ", name='" + name + '\'' +
+                ", dateOfBirth='" + dateOfBirth + '\'' +
+                ", address='" + address + '\'' +
+                ", height=" + height +
+                ", weight=" + weight +
                 '}';
     }
 }

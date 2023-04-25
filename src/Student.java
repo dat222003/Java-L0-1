@@ -1,30 +1,29 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Student extends People{
     private static final List<String> assignedIds = new ArrayList<>();
     private String studentId;
     private String university;
-    private LocalDate startDate;
+    private Integer startYear;
     private Float GPA;
 
-    public Student(String name, String dateOfBirth, Float height, Float weight, String studentId, String university, LocalDate startDate, Float GPA) {
-        super(name, dateOfBirth, height, weight);
-        if (studentId == null) throw new IllegalArgumentException("studentID cannot be null.");
-
-        if (university == null) throw new IllegalArgumentException("university cannot be null.");
-
-        if (startDate == null) throw new IllegalArgumentException("startDate cannot be null.");
-
-        if (assignedIds.contains(studentId)) throw new IllegalArgumentException("This ID has already been assigned to another student.");
-
+    public Student(String name, LocalDate dateOfBirth, String address, Float height, Float weight, String studentId, String university, Integer startYear, Float GPA) {
+        super(name, dateOfBirth, address, height, weight);
         assignedIds.add(studentId);
         this.studentId = studentId;
         this.university = university;
-        this.startDate = startDate;
+        this.startYear = startYear;
         this.GPA = GPA;
+    }
+
+    public static void removeIdInAssignedIds(String idNeedToRemove) {
+        assignedIds.remove(idNeedToRemove);
+    }
+
+    public static List<String> getAssignedIds() {
+        return assignedIds;
     }
 
     public String getStudentId() {
@@ -43,12 +42,12 @@ public class Student extends People{
         this.university = university;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public Integer getStartYear() {
+        return startYear;
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+    public void setStartYear(Integer startYear) {
+        this.startYear = startYear;
     }
 
     public Float getGPA() {
@@ -62,10 +61,18 @@ public class Student extends People{
     @Override
     public String toString() {
         return "Student{" +
-                "StudentID='" + studentId + '\'' +
-                ", School='" + university + '\'' +
-                ", StartDate='" + startDate + '\'' +
+                "id=" + getId() +
+                ", name='" + getName() + '\'' +
+                ", dateOfBirth='" + getDateOfBirth() + '\'' +
+                ", address='" + getAddress() + '\'' +
+                ", height=" + getHeight() +
+                ", weight=" + getWeight() +
+                ", studentId='" + studentId + '\'' +
+                ", university='" + university + '\'' +
+                ", startYear=" + startYear +
                 ", GPA=" + GPA +
-                "} ";
+                '}';
     }
+
 }
+
