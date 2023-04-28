@@ -7,7 +7,7 @@ public class ConsoleInputOutput {
 
     public static Student[] students = new Student[3];
 
-    public void ConsoleDisplay() {
+    public void consoleDisplay() {
         char userInput;
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
@@ -16,12 +16,12 @@ public class ConsoleInputOutput {
                 userInput = Character.toLowerCase(userInput);
                 switch (userInput) {
                     case 'c':
-                        CreateStudent();
+                        createStudent();
                         break;
                     case 'r':
                         System.out.print("Enter ID to find student: ");
                         String idString = scanner.next();
-                        FindStudentById(idString);
+                        findStudentById(idString);
                         break;
                     case 'u':
                         System.out.print("Enter ID to delete student: ");
@@ -62,7 +62,7 @@ public class ConsoleInputOutput {
     }
 
 
-    public void CreateStudent() {
+    public void createStudent() {
         Scanner scanner = new Scanner(System.in);
 
         String name;
@@ -141,7 +141,7 @@ public class ConsoleInputOutput {
     }
 
 
-    public Student FindStudentById(String idString) {
+    public Student findStudentById(String idString) {
         int id;
         try {
             id = Integer.parseInt(idString);
@@ -177,7 +177,7 @@ public class ConsoleInputOutput {
 
 
     public void updateStudent(String idString) {
-        Student studentToUpdate = FindStudentById(idString);
+        Student studentToUpdate = findStudentById(idString);
         if (studentToUpdate == null) return;
 
         try (Scanner scanner = new Scanner(System.in)) {
@@ -286,7 +286,7 @@ public class ConsoleInputOutput {
             return;
         }
 
-        Student studentToDelete = FindStudentById(idString);
+        Student studentToDelete = findStudentById(idString);
         if (studentToDelete == null) {
             System.out.println("Student with ID " + idToDelete + " not found");
             return;
