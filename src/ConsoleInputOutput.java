@@ -17,18 +17,14 @@ public class ConsoleInputOutput {
                 switch (userInput) {
                     case 'c':
                         CreateStudent();
-                        continuePrompt(scanner);
                         break;
                     case 'r':
                         FindStudentById(scanner);
-                        continuePrompt(scanner);
                         break;
                     case 'u':
-                        continuePrompt(scanner);
                         break;
                     case 'd':
                         promptForDeleteStudent(scanner);
-                        continuePrompt(scanner);
                         break;
                     case 'q':
                         System.out.println("Exiting...");
@@ -37,6 +33,7 @@ public class ConsoleInputOutput {
                         System.out.println("Invalid input!");
                         break;
                 }
+                continuePrompt(scanner);
             }
         }
     }

@@ -18,8 +18,8 @@ public class Student extends People{
         this.GPA = GPA;
     }
 
-    public static void removeIdInAssignedIds(String idNeedToRemove) {
-        assignedIds.remove(idNeedToRemove);
+    public static void removeIdInAssignedIds(String studentId) {
+        assignedIds.remove(studentId);
     }
 
     public static List<String> getAssignedIds() {
