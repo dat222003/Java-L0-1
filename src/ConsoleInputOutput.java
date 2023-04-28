@@ -3,6 +3,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.InputMismatchException;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.function.Function;
 
 public class ConsoleInputOutput {
 
@@ -19,12 +20,16 @@ public class ConsoleInputOutput {
                         CreateStudent();
                         break;
                     case 'r':
-                        FindStudentById(scanner);
+                        System.out.print("Enter ID to find student: ");
+                        String idString = scanner.next();
+                        FindStudentById(idString);
                         break;
                     case 'u':
                         break;
                     case 'd':
-                        promptForDeleteStudent(scanner);
+                        System.out.print("Enter ID to delete student: ");
+                        String deleteIdString = scanner.next();
+                        promptForDeleteStudent(deleteIdString);
                         break;
                     case 'q':
                         System.out.println("Exiting...");
@@ -37,6 +42,8 @@ public class ConsoleInputOutput {
             }
         }
     }
+
+
 
     public static void continuePrompt(Scanner scanner) {
         System.out.print("Do you want to continue? (y = yes, else = exit): ");
@@ -127,38 +134,36 @@ public class ConsoleInputOutput {
     }
 
 
-    public void FindStudentById(Scanner scanner) {
-        int Id;
-
-        System.out.print("Enter Id to find student: ");
-
+    public void FindStudentById(String idString) {
+        int id;
         try {
-            Id = scanner.nextInt();
-            if (students[0] == null) {
-                System.out.println("Please insert student first");
+            id = Integer.parseInt(idString);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid ID entered. Please enter a valid integer ID.");
+            return;
+        }
+
+        if (students[0] == null) {
+            System.out.println("Please insert student first");
+            return;
+        }
+
+        for (Student student : students) {
+            if (student == null) break;
+            if (Objects.equals(student.getId(), id)) {
+                System.out.println(student);
                 return;
             }
-
-            for (Student student : students) {
-                if (student == null) break;
-                if (Objects.equals(student.getId(), Id)) {
-                    System.out.println(student);
-                    return;
-                }
-            }
-            System.out.println("student with Id = " + Id + " not found ");
-        } catch (InputMismatchException exception) {
-            System.out.println("Please enter integer only");
-            scanner.nextLine();
         }
+        System.out.println("Student with ID = " + id + " not found");
     }
 
 
-    public void promptForDeleteStudent(Scanner scanner) {
+
+    public void promptForDeleteStudent(String idString) {
         int inputId;
         try {
-            System.out.print("Enter id to delete student: ");
-            inputId = scanner.nextInt();
+            inputId = Integer.parseInt(idString);
             if (students[0] == null) {
                 System.out.println("Please insert student first");
                 return;
@@ -167,7 +172,8 @@ public class ConsoleInputOutput {
                 if (students[index] == null)
                     break;
                 if (Objects.equals(students[index].getId(), inputId)) {
-                    System.out.println("Do you want to delete student with id = " + inputId + " (y = yes, else = exit): ");
+                    System.out.print("Do you want to delete student with id = " + inputId + " (y = yes, else = exit): ");
+                    Scanner scanner = new Scanner(System.in);
                     char userInput = scanner.next().toLowerCase().charAt(0);
                     if (userInput == 'y') {
                         confirmDeleteStudent(index);
@@ -178,11 +184,11 @@ public class ConsoleInputOutput {
                 }
             }
             System.out.println("student with inputId = " + inputId + " not found ");
-        } catch (InputMismatchException exception) {
+        } catch (NumberFormatException exception) {
             System.out.println("Please enter integer only");
-            scanner.nextLine();
         }
     }
+
 
     public void confirmDeleteStudent(int indexOfStudent) {
         String oldStudentId = students[indexOfStudent].getStudentId();
