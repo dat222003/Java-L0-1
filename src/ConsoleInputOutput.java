@@ -209,4 +209,21 @@ public class ConsoleInputOutput {
         System.out.println("Student Deleted");
     }
 
+
+    private static String getInput(Scanner scanner, String fieldName, String currentValue, Function<String, Boolean> validator) {
+        String input = "";
+        boolean isValid;
+        do {
+            System.out.print(fieldName + " (" + currentValue + "): ");
+            input = scanner.nextLine().trim();
+            isValid = input.isEmpty() || validator.apply(input);
+            if (!isValid) {
+                System.out.println("Invalid input!");
+            }
+        } while (!isValid);
+        return input;
+    }
+
+
+
 }
