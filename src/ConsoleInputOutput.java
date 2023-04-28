@@ -1,13 +1,12 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.InputMismatchException;
 import java.util.Objects;
 import java.util.Scanner;
-import java.util.function.Function;
 
 public class ConsoleInputOutput {
 
     public static Student[] students = new Student[3];
+
     public void ConsoleDisplay() {
         char userInput;
         try (Scanner scanner = new Scanner(System.in)) {
@@ -25,6 +24,9 @@ public class ConsoleInputOutput {
                         FindStudentById(idString);
                         break;
                     case 'u':
+                        System.out.print("Enter ID to delete student: ");
+                        String updateIdString = scanner.next();
+                        updateStudent(updateIdString);
                         break;
                     case 'd':
                         System.out.print("Enter ID to delete student: ");
@@ -38,21 +40,27 @@ public class ConsoleInputOutput {
                         System.out.println("Invalid input!");
                         break;
                 }
-                continuePrompt(scanner);
+                continuePrompt();
             }
         }
     }
 
 
+    public void continuePrompt() {
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.print("Do you want to continue? (y = yes, else = exit): ");
+            String input = scanner.nextLine().trim();
 
-    public static void continuePrompt(Scanner scanner) {
-        System.out.print("Do you want to continue? (y = yes, else = exit): ");
-        char userInput = scanner.next().toLowerCase().charAt(0);
-        if (userInput != 'y') {
-            System.out.println("Exiting...");
-            System.exit(0);
+            if (!input.equalsIgnoreCase("y")) {
+                System.out.println("Exiting...");
+                System.exit(0);
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred while reading user input: " + e.getMessage());
+            System.exit(1);
         }
     }
+
 
     public void CreateStudent() {
         Scanner scanner = new Scanner(System.in);
@@ -111,18 +119,9 @@ public class ConsoleInputOutput {
             System.out.print("Enter student's GPA: ");
             GPA = scanner.nextLine();
         } while (!Validator.validateGPA(GPA));
+
         DateTimeFormatter dateOfBirthFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        Student student = new Student(
-                name,
-                LocalDate.parse(dateOfBirth, dateOfBirthFormatter),
-                address,
-                Float.valueOf(height),
-                Float.valueOf(weight),
-                studentId,
-                university,
-                Integer.valueOf(startYear),
-                Float.valueOf(GPA)
-        );
+        Student student = new Student(name, LocalDate.parse(dateOfBirth, dateOfBirthFormatter), address, Float.valueOf(height), Float.valueOf(weight), studentId, university, Integer.valueOf(startYear), Float.valueOf(GPA));
         for (int i = 0; i < students.length; i++) {
             if (students[i] == null) {
                 students[i] = student;
@@ -134,58 +133,164 @@ public class ConsoleInputOutput {
     }
 
 
-    public void FindStudentById(String idString) {
+    public Student FindStudentById(String idString) {
         int id;
         try {
             id = Integer.parseInt(idString);
         } catch (NumberFormatException e) {
             System.out.println("Invalid ID entered. Please enter a valid integer ID.");
-            return;
+            return null;
         }
 
         if (students[0] == null) {
             System.out.println("Please insert student first");
-            return;
+            return null;
         }
 
         for (Student student : students) {
             if (student == null) break;
             if (Objects.equals(student.getId(), id)) {
                 System.out.println(student);
-                return;
+                return student;
             }
         }
         System.out.println("Student with ID = " + id + " not found");
+        return null;
+    }
+
+    private int findIndexOfStudentById(int id) {
+        for (int i = 0; i < students.length; i++) {
+            if (students[i] != null && students[i].getId() == id) {
+                return i;
+            }
+        }
+        return -1;
     }
 
 
+    public void updateStudent(String idString) {
+        Student studentToUpdate = FindStudentById(idString);
+        if (studentToUpdate == null) return;
 
-    public void promptForDeleteStudent(String idString) {
-        int inputId;
-        try {
-            inputId = Integer.parseInt(idString);
-            if (students[0] == null) {
-                System.out.println("Please insert student first");
-                return;
-            }
-            for (int index=0; index < students.length; index++) {
-                if (students[index] == null)
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.println("Enter fields to update ( Press Enter to remain old value )");
+
+            while (true) {
+                System.out.print("Name (" + studentToUpdate.getName() + "): ");
+                String name = scanner.nextLine().trim();
+                if (name.isEmpty()) {
+                    System.out.println("Skipping Name field...");
                     break;
-                if (Objects.equals(students[index].getId(), inputId)) {
-                    System.out.print("Do you want to delete student with id = " + inputId + " (y = yes, else = exit): ");
-                    Scanner scanner = new Scanner(System.in);
-                    char userInput = scanner.next().toLowerCase().charAt(0);
-                    if (userInput == 'y') {
-                        confirmDeleteStudent(index);
-                        return;
-                    }
-                    System.out.println("Canceled");
-                    return;
+                } else if (Validator.validateName(name)) {
+                    studentToUpdate.setName(name);
+                    break;
                 }
             }
-            System.out.println("student with inputId = " + inputId + " not found ");
-        } catch (NumberFormatException exception) {
-            System.out.println("Please enter integer only");
+
+            while (true) {
+                System.out.print("Address (" + studentToUpdate.getAddress() + "): ");
+                String address = scanner.nextLine().trim();
+                if (address.isEmpty()) {
+                    System.out.println("Skipping Address field...");
+                    break;
+                } else if (Validator.validateAddress(address)) {
+                    studentToUpdate.setAddress(address);
+                    break;
+                }
+            }
+
+            while (true) {
+                System.out.print("GPA (" + studentToUpdate.getGPA() + "): ");
+                String GPAString = scanner.nextLine().trim();
+                if (GPAString.isEmpty()) {
+                    System.out.println("Skipping GPA field...");
+                    break;
+                } else if (Validator.validateGPA(GPAString)) {
+                    float GPA = Float.parseFloat(GPAString);
+                    studentToUpdate.setGPA(GPA);
+                    break;
+                }
+            }
+
+            while (true) {
+                System.out.print("University (" + studentToUpdate.getUniversity() + "): ");
+                String university = scanner.nextLine().trim();
+                if (university.isEmpty()) {
+                    System.out.println("Skipping University field...");
+                    break;
+                } else if (Validator.validateUniversity(university)) {
+                    studentToUpdate.setUniversity(university);
+                    break;
+                }
+            }
+
+            while (true) {
+                System.out.print("Start Year (" + studentToUpdate.getStartYear() + "): ");
+                String startYearString = scanner.nextLine().trim();
+                if (startYearString.isEmpty()) {
+                    System.out.println("Skipping Start Year field...");
+                    break;
+                } else if (Validator.validateStartYear(startYearString)) {
+                    int startYear = Integer.parseInt(startYearString);
+                    studentToUpdate.setStartYear(startYear);
+                    break;
+                }
+            }
+
+            while (true) {
+                System.out.print("Height (" + studentToUpdate.getHeight() + "): ");
+                String heightString = scanner.nextLine().trim();
+                if (heightString.isEmpty()) {
+                    System.out.println("Skipping Height field...");
+                    break;
+                } else if (Validator.validateHeight(heightString)) {
+                    float height = Float.parseFloat(heightString);
+                    studentToUpdate.setHeight(height);
+                    break;
+                }
+            }
+
+            while (true) {
+                System.out.print("Weight (" + studentToUpdate.getWeight() + "): ");
+                String weightString = scanner.nextLine().trim();
+                if (weightString.isEmpty()) {
+                    System.out.println("Skipping Weight field...");
+                    break;
+                } else if (Validator.validateWeight(weightString)) {
+                    float weight = Float.parseFloat(weightString);
+                    studentToUpdate.setWeight(weight);
+                    break;
+                }
+            }
+
+            System.out.println("Student record updated!");
+            System.out.println(studentToUpdate);
+        }
+    }
+
+
+    public void promptForDeleteStudent(String idString) {
+        int idToDelete;
+        try {
+            idToDelete = Integer.parseInt(idString);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid ID entered. Please enter a valid integer ID.");
+            return;
+        }
+
+        Student studentToDelete = FindStudentById(idString);
+        if (studentToDelete == null) {
+            System.out.println("Student with ID " + idToDelete + " not found");
+            return;
+        }
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Do you want to delete student with ID = " + idToDelete + " (y = yes, any other key = cancel): ");
+        char userInput = scanner.next().toLowerCase().charAt(0);
+        if (userInput == 'y') {
+            confirmDeleteStudent(findIndexOfStudentById(idToDelete));
+        } else {
+            System.out.println("Canceled");
         }
     }
 
@@ -194,8 +299,7 @@ public class ConsoleInputOutput {
         String oldStudentId = students[indexOfStudent].getStudentId();
         for (int j = indexOfStudent; j < students.length - 1; j++) {
             students[j] = students[j + 1];
-            if (students[j] == null)
-                break;
+            if (students[j] == null) break;
             int oldId = students[j].getId();
             students[j].setId(oldId - 1);
         }
@@ -208,22 +312,6 @@ public class ConsoleInputOutput {
         Student.DecreaseAutoIncrementId();
         System.out.println("Student Deleted");
     }
-
-
-    private static String getInput(Scanner scanner, String fieldName, String currentValue, Function<String, Boolean> validator) {
-        String input = "";
-        boolean isValid;
-        do {
-            System.out.print(fieldName + " (" + currentValue + "): ");
-            input = scanner.nextLine().trim();
-            isValid = input.isEmpty() || validator.apply(input);
-            if (!isValid) {
-                System.out.println("Invalid input!");
-            }
-        } while (!isValid);
-        return input;
-    }
-
 
 
 }
