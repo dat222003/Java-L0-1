@@ -121,7 +121,15 @@ public class ConsoleInputOutput {
         } while (!Validator.validateGPA(GPA));
 
         DateTimeFormatter dateOfBirthFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        Student student = new Student(name, LocalDate.parse(dateOfBirth, dateOfBirthFormatter), address, Float.valueOf(height), Float.valueOf(weight), studentId, university, Integer.valueOf(startYear), Float.valueOf(GPA));
+        Student student = new Student(
+                name,
+                LocalDate.parse(dateOfBirth,
+                dateOfBirthFormatter),
+                address, Float.valueOf(height),
+                Float.valueOf(weight), studentId,
+                university, Integer.valueOf(startYear),
+                Float.valueOf(GPA)
+        );
         for (int i = 0; i < students.length; i++) {
             if (students[i] == null) {
                 students[i] = student;
@@ -170,101 +178,131 @@ public class ConsoleInputOutput {
 
     public void updateStudent(String idString) {
         Student studentToUpdate = FindStudentById(idString);
-        if (studentToUpdate == null) return;
+        if (studentToUpdate == null) {
+            return;
+        }
 
         try (Scanner scanner = new Scanner(System.in)) {
-            System.out.println("Enter fields to update ( Press Enter to remain old value )");
+            System.out.println("Enter fields to update (Press Enter to remain old value):");
 
-            while (true) {
-                System.out.print("Name (" + studentToUpdate.getName() + "): ");
-                String name = scanner.nextLine().trim();
-                if (name.isEmpty()) {
-                    System.out.println("Skipping Name field...");
-                    break;
-                } else if (Validator.validateName(name)) {
-                    studentToUpdate.setName(name);
-                    break;
-                }
-            }
+            updateName(studentToUpdate, scanner);
 
-            while (true) {
-                System.out.print("Address (" + studentToUpdate.getAddress() + "): ");
-                String address = scanner.nextLine().trim();
-                if (address.isEmpty()) {
-                    System.out.println("Skipping Address field...");
-                    break;
-                } else if (Validator.validateAddress(address)) {
-                    studentToUpdate.setAddress(address);
-                    break;
-                }
-            }
+            updateAddress(studentToUpdate, scanner);
 
-            while (true) {
-                System.out.print("GPA (" + studentToUpdate.getGPA() + "): ");
-                String GPAString = scanner.nextLine().trim();
-                if (GPAString.isEmpty()) {
-                    System.out.println("Skipping GPA field...");
-                    break;
-                } else if (Validator.validateGPA(GPAString)) {
-                    float GPA = Float.parseFloat(GPAString);
-                    studentToUpdate.setGPA(GPA);
-                    break;
-                }
-            }
+            updateGPA(studentToUpdate, scanner);
 
-            while (true) {
-                System.out.print("University (" + studentToUpdate.getUniversity() + "): ");
-                String university = scanner.nextLine().trim();
-                if (university.isEmpty()) {
-                    System.out.println("Skipping University field...");
-                    break;
-                } else if (Validator.validateUniversity(university)) {
-                    studentToUpdate.setUniversity(university);
-                    break;
-                }
-            }
+            updateUniversity(studentToUpdate, scanner);
 
-            while (true) {
-                System.out.print("Start Year (" + studentToUpdate.getStartYear() + "): ");
-                String startYearString = scanner.nextLine().trim();
-                if (startYearString.isEmpty()) {
-                    System.out.println("Skipping Start Year field...");
-                    break;
-                } else if (Validator.validateStartYear(startYearString)) {
-                    int startYear = Integer.parseInt(startYearString);
-                    studentToUpdate.setStartYear(startYear);
-                    break;
-                }
-            }
+            updateStartYear(studentToUpdate, scanner);
 
-            while (true) {
-                System.out.print("Height (" + studentToUpdate.getHeight() + "): ");
-                String heightString = scanner.nextLine().trim();
-                if (heightString.isEmpty()) {
-                    System.out.println("Skipping Height field...");
-                    break;
-                } else if (Validator.validateHeight(heightString)) {
-                    float height = Float.parseFloat(heightString);
-                    studentToUpdate.setHeight(height);
-                    break;
-                }
-            }
+            updateHeight(studentToUpdate, scanner);
 
-            while (true) {
-                System.out.print("Weight (" + studentToUpdate.getWeight() + "): ");
-                String weightString = scanner.nextLine().trim();
-                if (weightString.isEmpty()) {
-                    System.out.println("Skipping Weight field...");
-                    break;
-                } else if (Validator.validateWeight(weightString)) {
-                    float weight = Float.parseFloat(weightString);
-                    studentToUpdate.setWeight(weight);
-                    break;
-                }
-            }
+            updateWeight(studentToUpdate, scanner);
 
             System.out.println("Student record updated!");
             System.out.println(studentToUpdate);
+        }
+    }
+
+    private void updateName(Student student, Scanner scanner) {
+        while (true) {
+            System.out.print("Name (" + student.getName() + "): ");
+            String name = scanner.nextLine().trim();
+            if (name.isEmpty()) {
+                System.out.println("Skipping Name field...");
+                break;
+            } else if (Validator.validateName(name)) {
+                student.setName(name);
+                break;
+            }
+        }
+    }
+
+    private void updateAddress(Student student, Scanner scanner) {
+        while (true) {
+            System.out.print("Address (" + student.getAddress() + "): ");
+            String address = scanner.nextLine().trim();
+            if (address.isEmpty()) {
+                System.out.println("Skipping Address field...");
+                break;
+            } else if (Validator.validateAddress(address)) {
+                student.setAddress(address);
+                break;
+            }
+        }
+    }
+
+    private void updateGPA(Student student, Scanner scanner) {
+        while (true) {
+            System.out.print("GPA (" + student.getGPA() + "): ");
+            String GPAString = scanner.nextLine().trim();
+            if (GPAString.isEmpty()) {
+                System.out.println("Skipping GPA field...");
+                break;
+            } else if (Validator.validateGPA(GPAString)) {
+                float GPA = Float.parseFloat(GPAString);
+                student.setGPA(GPA);
+                break;
+            }
+        }
+    }
+
+    private void updateUniversity(Student student, Scanner scanner) {
+        while (true) {
+            System.out.print("University (" + student.getUniversity() + "): ");
+            String university = scanner.nextLine().trim();
+            if (university.isEmpty()) {
+                System.out.println("Skipping University field...");
+                break;
+            } else if (Validator.validateUniversity(university)) {
+                student.setUniversity(university);
+                break;
+            }
+        }
+    }
+
+    private void updateStartYear(Student student, Scanner scanner) {
+        while (true) {
+            System.out.print("Start Year (" + student.getStartYear() + "): ");
+            String startYearString = scanner.nextLine().trim();
+            if (startYearString.isEmpty()) {
+                System.out.println("Skipping Start Year field...");
+                break;
+            } else if (Validator.validateStartYear(startYearString)) {
+                int startYear = Integer.parseInt(startYearString);
+                student.setStartYear(startYear);
+                break;
+            }
+        }
+    }
+
+    private void updateHeight(Student student, Scanner scanner) {
+        while (true) {
+            System.out.print("Height (" + student.getHeight() + "): ");
+            String heightString = scanner.nextLine().trim();
+            if (heightString.isEmpty()) {
+                System.out.println("Skipping Height field...");
+                break;
+            } else if (Validator.validateHeight(heightString)) {
+                float height = Float.parseFloat(heightString);
+                student.setHeight(height);
+                break;
+            }
+        }
+    }
+
+    private void updateWeight(Student student, Scanner scanner) {
+        while (true) {
+            System.out.print("Weight (" + student.getWeight() + "): ");
+            String weightString = scanner.nextLine().trim();
+            if (weightString.isEmpty()) {
+                System.out.println("Skipping Weight field...");
+                break;
+            } else if (Validator.validateWeight(weightString)) {
+                float weight = Float.parseFloat(weightString);
+                student.setWeight(weight);
+                break;
+            }
         }
     }
 
