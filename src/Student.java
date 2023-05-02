@@ -2,12 +2,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Student extends People{
+public class Student extends People {
     private static final List<String> assignedIds = new ArrayList<>();
     private String studentId;
     private String university;
     private Integer startYear;
     private Float GPA;
+    private PerformanceLevel PerformanceLevel;
+
 
     public Student(String name, LocalDate dateOfBirth, String address, Float height, Float weight, String studentId, String university, Integer startYear, Float GPA) {
         super(name, dateOfBirth, address, height, weight);
@@ -58,6 +60,14 @@ public class Student extends People{
         this.GPA = GPA;
     }
 
+    public PerformanceLevel getPerformanceLevel() {
+        return PerformanceLevel;
+    }
+
+    public void setPerformanceLevel(PerformanceLevel performanceLevel) {
+        PerformanceLevel = performanceLevel;
+    }
+
     @Override
     public String toString() {
         return "Student{" +
@@ -71,6 +81,7 @@ public class Student extends People{
                 ", university='" + university + '\'' +
                 ", startYear=" + startYear +
                 ", GPA=" + GPA +
+                ", Performance Level=" + PerformanceLevel +
                 '}';
     }
 

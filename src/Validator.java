@@ -5,12 +5,12 @@ import java.util.List;
 
 public class Validator {
     public static boolean validateName(String name) {
-        if (name == null || name.isEmpty()) {
+        if (name == null) {
             return false;
         }
 
         if (name.length() > Constants.MAX_NAME_LENGTH) {
-            System.out.println("Name must be less than "+ Constants.MAX_NAME_LENGTH +".");
+            System.out.println("Name must be less than " + Constants.MAX_NAME_LENGTH + ".");
             return false;
         }
 
@@ -18,7 +18,7 @@ public class Validator {
     }
 
     public static boolean validateDateOfBirth(String dateOfBirth) {
-        if (dateOfBirth == null || dateOfBirth.isEmpty()) {
+        if (dateOfBirth == null) {
             return false;
         }
 
@@ -52,12 +52,12 @@ public class Validator {
     }
 
     public static boolean validateAddress(String address) {
-        if (address == null || address.isEmpty()) {
+        if (address == null) {
             return false;
         }
 
         if (address.length() > Constants.MAX_ADDRESS_LENGTH) {
-            System.out.println("Address must be less than "+ Constants.MAX_ADDRESS_LENGTH +" characters.");
+            System.out.println("Address must be less than " + Constants.MAX_ADDRESS_LENGTH + " characters.");
             return false;
         }
 
@@ -114,7 +114,7 @@ public class Validator {
     }
 
     public static boolean validateStudentId(String studentId) {
-        if (studentId == null || studentId.isEmpty()) {
+        if (studentId == null) {
             return false;
         }
         if (studentId.length() != Constants.STUDENT_ID_LENGTH) {
@@ -130,7 +130,7 @@ public class Validator {
     }
 
     public static boolean validateUniversity(String university) {
-        if (university == null || university.isEmpty()) {
+        if (university == null) {
             return false;
         }
 

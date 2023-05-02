@@ -1,11 +1,13 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class ConsoleInputOutput {
 
-    public static Student[] students = new Student[3];
+    public static List<Student> students = new ArrayList<>();
 
     public void consoleDisplay() {
         char userInput;
@@ -14,23 +16,24 @@ public class ConsoleInputOutput {
                 System.out.print("Please choose interaction with student : [C]create, [R]read, [U]update, [D]delete, or [q]quit: ");
                 userInput = scanner.next().charAt(0);
                 userInput = Character.toLowerCase(userInput);
+                scanner.nextLine();
                 switch (userInput) {
                     case 'c':
-                        createStudent();
+                        createStudent(scanner);
                         break;
                     case 'r':
                         System.out.print("Enter ID to find student: ");
-                        String idString = scanner.next();
+                        String idString = scanner.nextLine();
                         findStudentById(idString);
                         break;
                     case 'u':
                         System.out.print("Enter ID to delete student: ");
-                        String updateIdString = scanner.next();
+                        String updateIdString = scanner.nextLine();
                         updateStudent(updateIdString);
                         break;
                     case 'd':
                         System.out.print("Enter ID to delete student: ");
-                        String deleteIdString = scanner.next();
+                        String deleteIdString = scanner.nextLine();
                         promptForDeleteStudent(deleteIdString);
                         break;
                     case 'q':
@@ -40,30 +43,19 @@ public class ConsoleInputOutput {
                         System.out.println("Invalid input!");
                         break;
                 }
-                continuePrompt();
+                System.out.print("Do you want to continue? (y = yes, else = exit): ");
+                String input = scanner.nextLine().trim();
+                if (!input.equalsIgnoreCase("y")) {
+                    System.out.println(input);
+                    System.out.println("Exiting...");
+                    System.exit(0);
+                }
             }
         }
     }
 
 
-    public void continuePrompt() {
-        try (Scanner scanner = new Scanner(System.in)) {
-            System.out.print("Do you want to continue? (y = yes, else = exit): ");
-            String input = scanner.nextLine().trim();
-
-            if (!input.equalsIgnoreCase("y")) {
-                System.out.println("Exiting...");
-                System.exit(0);
-            }
-        } catch (Exception e) {
-            System.out.println("An error occurred while reading user input: " + e.getMessage());
-            System.exit(1);
-        }
-    }
-
-
-    public void createStudent() {
-        Scanner scanner = new Scanner(System.in);
+    public void createStudent(Scanner scanner) {
 
         String name;
         String dateOfBirth;
@@ -121,21 +113,20 @@ public class ConsoleInputOutput {
         } while (!Validator.validateGPA(GPA));
 
         DateTimeFormatter dateOfBirthFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        Student student = new Student(
-                name,
+        Student student = new Student(name,
                 LocalDate.parse(dateOfBirth,
                 dateOfBirthFormatter),
-                address, Float.valueOf(height),
-                Float.valueOf(weight), studentId,
-                university, Integer.valueOf(startYear),
-                Float.valueOf(GPA)
+                address,
+                Float.valueOf(height),
+                Float.valueOf(weight),
+                studentId,
+                university,
+                Integer.valueOf(startYear),
+                Float.valueOf(GPA));
+        student.setPerformanceLevel(
+                calculatePerformanceLevel(student.getGPA())
         );
-        for (int i = 0; i < students.length; i++) {
-            if (students[i] == null) {
-                students[i] = student;
-                break;
-            }
-        }
+        students.add(student);
         System.out.println(student);
         System.out.println("Student created!");
     }
@@ -150,7 +141,7 @@ public class ConsoleInputOutput {
             return null;
         }
 
-        if (students[0] == null) {
+        if (students.isEmpty()) {
             System.out.println("Please insert student first");
             return null;
         }
@@ -166,15 +157,6 @@ public class ConsoleInputOutput {
         return null;
     }
 
-    private int findIndexOfStudentById(int id) {
-        for (int i = 0; i < students.length; i++) {
-            if (students[i] != null && students[i].getId() == id) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
 
     public void updateStudent(String idString) {
         Student studentToUpdate = findStudentById(idString);
@@ -182,7 +164,6 @@ public class ConsoleInputOutput {
 
         try (Scanner scanner = new Scanner(System.in)) {
             System.out.println("Enter fields to update ( Press Enter to remain old value )");
-
             while (true) {
                 System.out.print("Name (" + studentToUpdate.getName() + "): ");
                 String name = scanner.nextLine().trim();
@@ -191,6 +172,19 @@ public class ConsoleInputOutput {
                     break;
                 } else if (Validator.validateName(name)) {
                     studentToUpdate.setName(name);
+                    break;
+                }
+            }
+
+            while (true) {
+                System.out.print("Date of Birth (dd-MM-yyyy) (" + studentToUpdate.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "): ");
+                String dobString = scanner.nextLine().trim();
+                if (dobString.isEmpty()) {
+                    System.out.println("Skipping Date of Birth field...");
+                    break;
+                } else if (Validator.validateDateOfBirth(dobString)) {
+                    LocalDate dob = LocalDate.parse(dobString, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                    studentToUpdate.setDateOfBirth(dob);
                     break;
                 }
             }
@@ -207,18 +201,6 @@ public class ConsoleInputOutput {
                 }
             }
 
-            while (true) {
-                System.out.print("GPA (" + studentToUpdate.getGPA() + "): ");
-                String GPAString = scanner.nextLine().trim();
-                if (GPAString.isEmpty()) {
-                    System.out.println("Skipping GPA field...");
-                    break;
-                } else if (Validator.validateGPA(GPAString)) {
-                    float GPA = Float.parseFloat(GPAString);
-                    studentToUpdate.setGPA(GPA);
-                    break;
-                }
-            }
 
             while (true) {
                 System.out.print("University (" + studentToUpdate.getUniversity() + "): ");
@@ -271,6 +253,20 @@ public class ConsoleInputOutput {
                 }
             }
 
+            while (true) {
+                System.out.print("GPA (" + studentToUpdate.getGPA() + "): ");
+                String GPAString = scanner.nextLine().trim();
+                if (GPAString.isEmpty()) {
+                    System.out.println("Skipping GPA field...");
+                    break;
+                } else if (Validator.validateGPA(GPAString)) {
+                    float GPA = Float.parseFloat(GPAString);
+                    studentToUpdate.setGPA(GPA);
+                    studentToUpdate.setPerformanceLevel(calculatePerformanceLevel(GPA));
+                    break;
+                }
+            }
+
             System.out.println("Student record updated!");
             System.out.println(studentToUpdate);
         }
@@ -294,32 +290,42 @@ public class ConsoleInputOutput {
 
         Scanner scanner = new Scanner(System.in);
         System.out.print("Do you want to delete student with ID = " + idToDelete + " (y = yes, any other key = cancel): ");
-        char userInput = scanner.next().toLowerCase().charAt(0);
+        char userInput = scanner.nextLine().toLowerCase().charAt(0);
         if (userInput == 'y') {
-            confirmDeleteStudent(findIndexOfStudentById(idToDelete));
+            confirmDeleteStudent(idToDelete);
         } else {
             System.out.println("Canceled");
         }
     }
 
 
-    public void confirmDeleteStudent(int indexOfStudent) {
-        String oldStudentId = students[indexOfStudent].getStudentId();
-        for (int j = indexOfStudent; j < students.length - 1; j++) {
-            students[j] = students[j + 1];
-            if (students[j] == null) break;
-            int oldId = students[j].getId();
-            students[j].setId(oldId - 1);
-        }
-        //handle delete last elements
-        if (indexOfStudent == students.length - 1) {
-            students[indexOfStudent] = null;
+    public void confirmDeleteStudent(int idToDelete) {
+        boolean isStudentRemoved = students.removeIf(student -> student.getId() == idToDelete);
+
+        if (!isStudentRemoved) {
+            System.out.println("Error: Student with ID " + idToDelete + " not found in list");
+            return;
         }
 
-        Student.removeIdInAssignedIds(oldStudentId);
+        int index = 1;
+        for (Student student : students) {
+            student.setId(index++);
+        }
+
+        Student.removeIdInAssignedIds(String.valueOf(idToDelete));
         Student.DecreaseAutoIncrementId();
         System.out.println("Student Deleted");
     }
 
+
+    public PerformanceLevel calculatePerformanceLevel(double gpa) {
+        if (gpa < 3) return PerformanceLevel.KEM;
+        if (gpa < 5) return PerformanceLevel.YEU;
+        if (gpa < 6.5) return PerformanceLevel.TRUNG_BINH;
+        if (gpa < 7.5) return PerformanceLevel.KHA;
+        if (gpa < 9) return PerformanceLevel.GIOI;
+
+        return PerformanceLevel.XUAT_SAC;
+    }
 
 }
