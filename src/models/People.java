@@ -1,3 +1,5 @@
+package models;
+
 import java.time.LocalDate;
 
 public class People {
@@ -73,7 +75,7 @@ public class People {
 
     @Override
     public String toString() {
-        return "People{" +
+        return "models.People{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", dateOfBirth='" + dateOfBirth + '\'' +

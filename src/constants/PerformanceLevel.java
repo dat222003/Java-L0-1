@@ -1,3 +1,5 @@
+package constants;
+
 public enum PerformanceLevel {
     KEM,
     YEU,

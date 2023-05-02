@@ -1,3 +1,4 @@
+package constants;
 
 import java.time.LocalDate;
 
@@ -14,4 +15,5 @@ public class Constants {
     public static final int MIN_START_YEAR = 1900;
     public static final float MIN_GPA = 1;
     public static final float MAX_GPA = 10;
+    public static final String STORAGE_FILE = "data/students.txt";
 }

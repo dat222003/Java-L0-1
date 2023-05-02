@@ -1,3 +1,7 @@
+package models;
+
+import constants.PerformanceLevel;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +12,7 @@ public class Student extends People {
     private String university;
     private Integer startYear;
     private Float GPA;
-    private PerformanceLevel PerformanceLevel;
+    private PerformanceLevel performanceLevel;
 
 
     public Student(String name, LocalDate dateOfBirth, String address, Float height, Float weight, String studentId, String university, Integer startYear, Float GPA) {
@@ -61,16 +65,16 @@ public class Student extends People {
     }
 
     public PerformanceLevel getPerformanceLevel() {
-        return PerformanceLevel;
+        return performanceLevel;
     }
 
     public void setPerformanceLevel(PerformanceLevel performanceLevel) {
-        PerformanceLevel = performanceLevel;
+        this.performanceLevel = performanceLevel;
     }
 
     @Override
     public String toString() {
-        return "Student{" +
+        return "models.Student{" +
                 "id=" + getId() +
                 ", name='" + getName() + '\'' +
                 ", dateOfBirth='" + getDateOfBirth() + '\'' +
@@ -81,7 +85,7 @@ public class Student extends People {
                 ", university='" + university + '\'' +
                 ", startYear=" + startYear +
                 ", GPA=" + GPA +
-                ", Performance Level=" + PerformanceLevel +
+                ", Performance Level=" + performanceLevel +
                 '}';
     }
 

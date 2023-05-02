@@ -1,3 +1,8 @@
+package functions;
+
+import constants.PerformanceLevel;
+import models.Student;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -128,7 +133,7 @@ public class ConsoleInputOutput {
         );
         students.add(student);
         System.out.println(student);
-        System.out.println("Student created!");
+        System.out.println("models.Student created!");
     }
 
 
@@ -153,7 +158,7 @@ public class ConsoleInputOutput {
                 return student;
             }
         }
-        System.out.println("Student with ID = " + id + " not found");
+        System.out.println("models.Student with ID = " + id + " not found");
         return null;
     }
 
@@ -267,7 +272,7 @@ public class ConsoleInputOutput {
                 }
             }
 
-            System.out.println("Student record updated!");
+            System.out.println("models.Student record updated!");
             System.out.println(studentToUpdate);
         }
     }
@@ -284,7 +289,7 @@ public class ConsoleInputOutput {
 
         Student studentToDelete = findStudentById(idString);
         if (studentToDelete == null) {
-            System.out.println("Student with ID " + idToDelete + " not found");
+            System.out.println("models.Student with ID " + idToDelete + " not found");
             return;
         }
 
@@ -303,7 +308,7 @@ public class ConsoleInputOutput {
         boolean isStudentRemoved = students.removeIf(student -> student.getId() == idToDelete);
 
         if (!isStudentRemoved) {
-            System.out.println("Error: Student with ID " + idToDelete + " not found in list");
+            System.out.println("Error: models.Student with ID " + idToDelete + " not found in list");
             return;
         }
 
@@ -314,7 +319,7 @@ public class ConsoleInputOutput {
 
         Student.removeIdInAssignedIds(String.valueOf(idToDelete));
         Student.DecreaseAutoIncrementId();
-        System.out.println("Student Deleted");
+        System.out.println("models.Student Deleted");
     }
 
 

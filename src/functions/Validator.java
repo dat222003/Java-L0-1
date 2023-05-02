@@ -1,3 +1,8 @@
+package functions;
+
+import constants.Constants;
+import models.Student;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -118,12 +123,12 @@ public class Validator {
             return false;
         }
         if (studentId.length() != Constants.STUDENT_ID_LENGTH) {
-            System.out.println("Student ID must be " + Constants.STUDENT_ID_LENGTH + " characters.");
+            System.out.println("models.Student ID must be " + Constants.STUDENT_ID_LENGTH + " characters.");
             return false;
         }
         List<String> assignedIds = Student.getAssignedIds();
         if (assignedIds.contains(studentId)) {
-            System.out.println("Student ID is already assigned.");
+            System.out.println("models.Student ID is already assigned.");
             return false;
         }
         return true;
