@@ -1,10 +1,9 @@
-import functions.ConsoleInputOutput;
+import functions.ConsoleMenu;
 
 public class Main {
     public static void main(String[] args) {
-        ConsoleInputOutput ConsoleIO = new ConsoleInputOutput();
+        ConsoleMenu ConsoleIO = new ConsoleMenu();
         ConsoleIO.consoleDisplay();
-
 
     }
 }

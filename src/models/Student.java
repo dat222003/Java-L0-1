@@ -74,7 +74,7 @@ public class Student extends People {
 
     @Override
     public String toString() {
-        return "models.Student{" +
+        return "Student{" +
                 "id=" + getId() +
                 ", name='" + getName() + '\'' +
                 ", dateOfBirth='" + getDateOfBirth() + '\'' +

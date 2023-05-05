@@ -75,7 +75,7 @@ public class People {
 
     @Override
     public String toString() {
-        return "models.People{" +
+        return "People{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", dateOfBirth='" + dateOfBirth + '\'' +
