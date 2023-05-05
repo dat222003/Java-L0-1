@@ -1,87 +1,85 @@
 package functions;
 
-import java.util.*;
+import constants.Constants;
+
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
 public class ConsoleMenu {
 
-    StudentServices studentServices = new StudentServices();
-    public void consoleDisplay() {
-        char userInput;
-        try (Scanner scanner = new Scanner(System.in)) {
-            while (true) {
-                System.out.print("Please choose interaction with student : [C]create, [R]read, [U]update, [D]delete, [S]Save or [q]quit: ");
-                userInput = scanner.next().charAt(0);
-                userInput = Character.toLowerCase(userInput);
-                scanner.nextLine();
-                switch (userInput) {
-                    case 'c':
-                        studentServices.createStudent();
-                        break;
-                    case 'r':
-                        displayReadFunctions();
-                        break;
-                    case 'u':
-                        System.out.print("Enter ID to update student: ");
-                        String updateIdString = scanner.nextLine();
-                        studentServices.updateStudent(updateIdString);
-                        break;
-                    case 'd':
-                        System.out.print("Enter ID to delete student: ");
-                        String deleteIdString = scanner.nextLine();
-                        studentServices.promptForDeleteStudent(deleteIdString);
-                        break;
-                    case 's':
-                        studentServices.writeStudentsToFile();
-                        break;
-                    case 'q':
-                        System.out.println("Exiting...");
-                        System.exit(0);
-                    default:
-                        System.out.println("Invalid input!");
-                        break;
-                }
+    private final StudentServices studentServices;
 
+    public ConsoleMenu() {
+        studentServices = new StudentServices();
+    }
+
+    public void consoleDisplay() {
+        try (Scanner scanner = Constants.SCANNER) {
+            while (true) {
+                System.out.print("Please choose an option:\n" +
+                        "1. Create a student\n" +
+                        "2. Find student by ID\n" +
+                        "3. Display student's performance level in percentage\n" +
+                        "4. Display student's GPA in percentage\n" +
+                        "5. Find students by performance level\n" +
+                        "6. Update student information\n" +
+                        "7. Delete a student\n" +
+                        "8. Get all students created\n" +
+                        "0. Save and quit\n" +
+                        "Your choice: ");
+                try {
+                    int userInput = scanner.nextInt();
+                    scanner.nextLine();
+                    //Got error when using enhanced switch: Enhanced 'switch' blocks are not supported at language level '8'
+                    switch (userInput) {
+                        case 1:
+                            studentServices.createStudent();
+                            break;
+                        case 2:
+                            studentServices.findStudentById();
+                            break;
+                        case 3:
+                            studentServices.printPercentageOfPerformanceLevel();
+                            break;
+                        case 4:
+                            studentServices.printPercentageOfGPA();
+                            break;
+                        case 5:
+                            studentServices.printStudentsByPerformanceLevel();
+                            break;
+                        case 6:
+                            studentServices.updateStudent();
+                            break;
+                        case 7:
+                            studentServices.promptForDeleteStudent();
+                            break;
+                        case 8:
+                            studentServices.printAllStudents();
+                            break;
+                        case 0:
+                            saveAndQuit();
+                        default:
+                            System.out.println("Invalid input! Must be from 0 -> 8");
+                            break;
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input! Must be a number");
+                    scanner.nextLine();
+                }
                 System.out.print("Do you want to continue? (y = yes, else = exit): ");
                 String input = scanner.nextLine().trim();
                 if (!input.equalsIgnoreCase("y")) {
-                    System.out.println("Exiting...");
-                    System.exit(0);
+                    saveAndQuit();
                 }
             }
         }
     }
 
-    public void displayReadFunctions() {
-        if (studentServices.isStudentListEmpty()) {
-            System.out.println("Please insert student first");
-            return;
-        }
-        System.out.print("1: to find student with id\n" +
-                "2: to display student's performance level in percentage\n" +
-                "3: to display student's GPA in percentage\n" +
-                "4: find students with performance level\n");
 
-        Scanner scanner = new Scanner(System.in);
-        char choice = scanner.next().charAt(0);
-        choice = Character.toLowerCase(choice);
-        scanner.nextLine();
-        switch (choice) {
-            case '1':
-                System.out.println("Enter id to find student: ");
-                String idString = scanner.nextLine();
-                studentServices.findStudentById(idString);
-                break;
-            case '2':
-                studentServices.printPercentageOfPerformanceLevel();
-                break;
-            case '3':
-                studentServices.printPercentageOfGPA();
-                break;
-            case '4':
-                studentServices.printStudentByPerformanceLevel();
-                break;
-            default:
-                System.out.println("Invalid Input");
-        }
+    public void saveAndQuit() {
+        studentServices.writeStudentsToFile();
+        studentServices.closeScanner();
+        System.out.println("Exiting...");
+        System.exit(0);
     }
 }

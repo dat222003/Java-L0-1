@@ -27,7 +27,7 @@ public class Validator {
             return false;
         }
 
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT);
         LocalDate parsedDate;
         try {
             parsedDate = LocalDate.parse(dateOfBirth, dateFormatter);
@@ -36,9 +36,9 @@ public class Validator {
             return false;
         }
 
-        //handle non exist days in the calendar (ex:31-02-2009)
-        String ParsedDate = parsedDate.format(dateFormatter);
-        if (!ParsedDate.equals(dateOfBirth)) {
+        //handle non exist days (ex:31-02-2009)
+        String parsedDateString = parsedDate.format(dateFormatter);
+        if (!parsedDateString.equals(dateOfBirth)) {
             System.out.println("Date of birth must be a valid calendar date.");
             return false;
         }
@@ -123,12 +123,12 @@ public class Validator {
             return false;
         }
         if (studentId.length() != Constants.STUDENT_ID_LENGTH) {
-            System.out.println("models.Student ID must be " + Constants.STUDENT_ID_LENGTH + " characters.");
+            System.out.println("Student ID must be " + Constants.STUDENT_ID_LENGTH + " characters.");
             return false;
         }
         List<String> assignedIds = Student.getAssignedIds();
         if (assignedIds.contains(studentId)) {
-            System.out.println("models.Student ID is already assigned.");
+            System.out.println("Student ID is already assigned.");
             return false;
         }
         return true;

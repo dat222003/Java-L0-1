@@ -1,21 +1,29 @@
 package functions;
 
-import constants.Constants;
-import constants.PerformanceLevel;
+import constants.*;
 import models.Student;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class StudentServices {
     public static List<Student> students = new ArrayList<>();
 
+    public static Scanner scanner = Constants.SCANNER;
+
+    public void printAllStudents() {
+        for (Student student : students) {
+            System.out.println(student);
+        }
+    }
+
     public void createStudent() {
-        Scanner studentScanner = new Scanner(System.in);
         String name;
         String dateOfBirth;
         String address;
@@ -28,50 +36,50 @@ public class StudentServices {
 
         do {
             System.out.print("Enter student's name: ");
-            name = studentScanner.nextLine();
+            name = scanner.nextLine();
         } while (!Validator.validateName(name));
 
         do {
-            System.out.print("Enter student's date of birth (dd-MM-yyyy): ");
-            dateOfBirth = studentScanner.nextLine();
+            System.out.print("Enter student's date of birth ( " + Constants.DATE_FORMAT + " ): ");
+            dateOfBirth = scanner.nextLine();
         } while (!Validator.validateDateOfBirth(dateOfBirth));
 
         do {
             System.out.print("Enter student's address: ");
-            address = studentScanner.nextLine();
+            address = scanner.nextLine();
         } while (!Validator.validateAddress(address));
 
         do {
             System.out.print("Enter student's height: ");
-            height = studentScanner.nextLine();
+            height = scanner.nextLine();
         } while (!Validator.validateHeight(height));
 
         do {
             System.out.print("Enter student's weight: ");
-            weight = studentScanner.nextLine();
+            weight = scanner.nextLine();
         } while (!Validator.validateWeight(weight));
 
         do {
             System.out.print("Enter student's ID: ");
-            studentId = studentScanner.nextLine();
+            studentId = scanner.nextLine();
         } while (!Validator.validateStudentId(studentId));
 
         do {
             System.out.print("Enter student's university: ");
-            university = studentScanner.nextLine();
+            university = scanner.nextLine();
         } while (!Validator.validateUniversity(university));
 
         do {
             System.out.print("Enter student's start year: ");
-            startYear = studentScanner.nextLine();
+            startYear = scanner.nextLine();
         } while (!Validator.validateStartYear(startYear));
 
         do {
             System.out.print("Enter student's GPA: ");
-            GPA = studentScanner.nextLine();
+            GPA = scanner.nextLine();
         } while (!Validator.validateGPA(GPA));
 
-        DateTimeFormatter dateOfBirthFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter dateOfBirthFormatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT);
         Student student = new Student(name,
                 LocalDate.parse(dateOfBirth,
                         dateOfBirthFormatter),
@@ -88,11 +96,20 @@ public class StudentServices {
         );
         students.add(student);
         System.out.println(student);
-
     }
 
 
-    public Student findStudentById(String idString) {
+    public void findStudentById() {
+        if (students.isEmpty()) {
+            System.out.println("StudentList is empty, Please insert student first");
+            return;
+        }
+        System.out.println("Enter id to find student: ");
+        String idString = scanner.nextLine().trim();
+        getStudent(idString);
+    }
+
+    private Student getStudent(String idString) {
         int id;
         try {
             id = Integer.parseInt(idString);
@@ -100,12 +117,6 @@ public class StudentServices {
             System.out.println("Invalid ID entered. Please enter a valid integer ID.");
             return null;
         }
-
-        if (students.isEmpty()) {
-            System.out.println("Please insert student first");
-            return null;
-        }
-
         for (Student student : students) {
             if (student == null) break;
             if (Objects.equals(student.getId(), id)) {
@@ -118,11 +129,17 @@ public class StudentServices {
     }
 
 
-    public void updateStudent(String idString) {
-        Student studentToUpdate = findStudentById(idString);
+    public void updateStudent() {
+        if (isStudentListEmpty()) {
+            System.out.println("StudentList is empty");
+            return;
+        }
+        System.out.print("Enter ID to update student: ");
+        String idString = scanner.nextLine().trim();
+
+        Student studentToUpdate = getStudent(idString);
         if (studentToUpdate == null) return;
 
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Enter fields to update ( Press Enter to remain old value )");
         while (true) {
             System.out.print("Name (" + studentToUpdate.getName() + "): ");
@@ -137,13 +154,13 @@ public class StudentServices {
         }
 
         while (true) {
-            System.out.print("Date of Birth (dd-MM-yyyy) (" + studentToUpdate.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "): ");
+            System.out.print("Date of Birth (" + Constants.DATE_FORMAT + ") (" + studentToUpdate.getDateOfBirth().format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)) + "): ");
             String dobString = scanner.nextLine().trim();
             if (dobString.isEmpty()) {
                 System.out.println("Skipping Date of Birth field...");
                 break;
             } else if (Validator.validateDateOfBirth(dobString)) {
-                LocalDate dob = LocalDate.parse(dobString, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                LocalDate dob = LocalDate.parse(dobString, DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
                 studentToUpdate.setDateOfBirth(dob);
                 break;
             }
@@ -160,7 +177,6 @@ public class StudentServices {
                 break;
             }
         }
-
 
         while (true) {
             System.out.print("University (" + studentToUpdate.getUniversity() + "): ");
@@ -227,27 +243,33 @@ public class StudentServices {
             }
         }
 
-        System.out.println("Student record updated!");
+        System.out.println("Student's records updated!");
         System.out.println(studentToUpdate);
     }
 
 
-    public void promptForDeleteStudent(String idString) {
+    public void promptForDeleteStudent() {
+        if (isStudentListEmpty()) {
+            System.out.println("StudentList is empty");
+            return;
+        }
+        System.out.print("Enter ID to delete student: ");
+        String deleteIdString = scanner.nextLine();
+
         int idToDelete;
         try {
-            idToDelete = Integer.parseInt(idString);
+            idToDelete = Integer.parseInt(deleteIdString);
         } catch (NumberFormatException e) {
             System.out.println("Invalid ID entered. Please enter a valid integer ID.");
             return;
         }
 
-        Student studentToDelete = findStudentById(idString);
+        Student studentToDelete = getStudent(deleteIdString);
         if (studentToDelete == null) {
             System.out.println("Student with ID " + idToDelete + " not found");
             return;
         }
 
-        Scanner scanner = new Scanner(System.in);
         System.out.print("Do you want to delete student with ID = " + idToDelete + " (y = yes, any other key = cancel): ");
         char userInput = scanner.nextLine().toLowerCase().charAt(0);
         if (userInput == 'y') {
@@ -283,64 +305,56 @@ public class StudentServices {
         if (gpa < 6.5) return PerformanceLevel.TRUNG_BINH;
         if (gpa < 7.5) return PerformanceLevel.KHA;
         if (gpa < 9) return PerformanceLevel.GIOI;
-
         return PerformanceLevel.XUAT_SAC;
     }
 
     public void printPercentageOfPerformanceLevel() {
-        Map<PerformanceLevel, Integer> levelCount = new HashMap<>();
-        for (PerformanceLevel level : PerformanceLevel.values()) {
-            levelCount.put(level, 0);
+        if (isStudentListEmpty()) {
+            System.out.println("StudentList is empty");
+            return;
         }
+        PerformanceLevel[] levels = PerformanceLevel.values();
+        int[] levelCount = new int[levels.length];
         for (Student student : students) {
-            PerformanceLevel level = student.getPerformanceLevel();
-            levelCount.put(level, levelCount.get(level) + 1);
+            levelCount[student.getPerformanceLevel().ordinal()]++;
         }
 
-        Map<PerformanceLevel, Double> performancePercentage = new HashMap<>();
-        for (PerformanceLevel level : PerformanceLevel.values()) {
-            int count = levelCount.get(level);
-            double percentage = ((double) count / students.size()) * 100;
-            performancePercentage.put(level, percentage);
-        }
-        List<Map.Entry<PerformanceLevel, Double>> sortedLevelPercentages = new ArrayList<>(performancePercentage.entrySet());
-        sortedLevelPercentages.sort(Map.Entry.<PerformanceLevel, Double>comparingByValue().reversed());
-        System.out.println("Performance level percentage: ");
-        for (Map.Entry<PerformanceLevel, Double> entry : sortedLevelPercentages) {
-            System.out.printf("%s: %.2f%%\n", entry.getKey(), entry.getValue());
-        }
+        double totalStudents = students.size();
+        System.out.println("Performance level percentage (from lowest to highest)");
 
+        for (int i = 0; i < levels.length; i++) {
+            double percentage = levelCount[i] / totalStudents * 100;
+            System.out.printf("%s: %.2f%%\n", levels[i], percentage);
+        }
     }
+
 
     public void printPercentageOfGPA() {
-        Set<Float> GPASet = new HashSet<>();
-        for (Student student : students) {
-            GPASet.add(student.getGPA());
+        if (isStudentListEmpty()) {
+            System.out.println("StudentList is empty");
+            return;
         }
-        Map<Float, Integer> GPACount = new HashMap<>();
-        for (Float GPA : GPASet) {
-            GPACount.put(GPA, 0);
-        }
-        for (Student student : students) {
-            Float GPA = student.getGPA();
-            GPACount.put(GPA, GPACount.get(GPA) + 1);
-        }
-        Map<Float, Double> GPAPercentage = new HashMap<>();
-        for (Float GPA : GPASet) {
-            int count = GPACount.get(GPA);
-            double percentage = ((double) count / students.size()) * 100;
-            GPAPercentage.put(GPA, percentage);
-        }
-        List<Map.Entry<Float, Double>> sortedGPAPercentage = new ArrayList<>(GPAPercentage.entrySet());
-        sortedGPAPercentage.sort(Map.Entry.comparingByValue());
-        System.out.println("GPA percentage (from lowest to highest):");
-        for (Map.Entry<Float, Double> entry : sortedGPAPercentage) {
-            System.out.printf("%s: %.2f%%\n", entry.getKey(), entry.getValue());
+
+        List<Float> gpaOfStudentList = students.stream()
+                .map(Student::getGPA)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+        System.out.println("GPA percentage (from lowest to highest)");
+        for (Float gpa : gpaOfStudentList) {
+            long count = students.stream()
+                    .filter(student -> student.getGPA().equals(gpa))
+                    .count();
+            double percentage = count / (double) students.size() * 100;
+            System.out.printf("%.1f: %.2f%%\n", gpa, percentage);
         }
     }
 
-    public void printStudentByPerformanceLevel() {
-        Scanner scanner = new Scanner(System.in);
+    public void printStudentsByPerformanceLevel() {
+        if (isStudentListEmpty()) {
+            System.out.println("StudentList is empty");
+            return;
+        }
         System.out.println("Find students by performance level" + Arrays.toString(PerformanceLevel.values()) + ": ");
         String userInput = scanner.nextLine().toUpperCase();
         PerformanceLevel level;
@@ -365,23 +379,54 @@ public class StudentServices {
     }
 
     public void writeStudentsToFile() {
-        String fileName = Constants.STORAGE_FILE;
+        if (isStudentListEmpty()) {
+            System.out.println("StudentList is empty");
+            return;
+        }
+
+        String fileName = Constants.STUDENT_STORAGE_FILE;
         try (FileWriter fileWriter = new FileWriter(fileName, false);
              BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-            if (students.isEmpty()) {
-                System.out.println("StudentList is empty");
-                return;
-            }
+
+            System.out.println("Saving to " + fileName + " .......");
             for (Student student : students) {
                 bufferedWriter.write(student.toString());
                 bufferedWriter.newLine();
             }
-            System.out.println("Student saved");
-        } catch (IOException e) {
-            System.out.println("folder 'data' not exist in your working dir");
+            System.out.println("Students saved");
+
+        } catch (IOException exception) {
+            System.out.println("Error: Unable to save data to " + fileName);
+            File dataFolder = new File(Constants.DATA_STORAGE_FOLDER);
+            if (!dataFolder.exists()) {
+                createDataFolderThenSave();
+            } else {
+                exception.printStackTrace();
+            }
         }
     }
 
+
+    private void createDataFolderThenSave() {
+        System.out.println("The '" + Constants.DATA_STORAGE_FOLDER + "' folder does not exist.");
+        System.out.print("Do you want to create it? ( Y = yes/ else = no ): ");
+        String response = scanner.nextLine().toLowerCase();
+        if (!response.equals("y")) {
+            System.out.println("Students were not saved.");
+            return;
+        }
+        boolean success = new File(Constants.DATA_STORAGE_FOLDER).mkdirs();
+        if (!success) {
+            System.out.println("Failed to create '" + Constants.DATA_STORAGE_FOLDER + "' folder.");
+            return;
+        }
+        System.out.println("Created '" + Constants.DATA_STORAGE_FOLDER + "' folder.");
+        writeStudentsToFile();
+    }
+
+    public void closeScanner() {
+        scanner.close();
+    }
 
 }
 
