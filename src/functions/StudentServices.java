@@ -3,10 +3,7 @@ package functions;
 import constants.*;
 import models.Student;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -41,7 +38,6 @@ public class StudentServices {
             dateOfBirth = scanner.nextLine();
             try {
                 LocalDate parsedDate = LocalDate.parse(dateOfBirth, dateFormatter);
-                System.out.println(parsedDate);
                 if (Validator.validateDateOfBirth(dateOfBirth, parsedDate))
                     return parsedDate;
             } catch (DateTimeParseException e) {
@@ -152,7 +148,8 @@ public class StudentServices {
         int startYear = getStudentStartYear();
         float gpa = getStudentGPA();
 
-        Student student = new Student(name,
+        Student student = new Student(
+                name,
                 dateOfBirth,
                 address,
                 height,
@@ -514,13 +511,12 @@ public class StudentServices {
         }
 
         String fileName = Constants.STUDENT_STORAGE_FILE;
-        try (FileWriter fileWriter = new FileWriter(fileName, false);
-             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
 
             System.out.println("Saving to " + fileName + " .......");
             for (Student student : students) {
-                bufferedWriter.write(student.toString());
-                bufferedWriter.newLine();
+                objectOutputStream.writeObject(student);
             }
             System.out.println("Students saved");
 
@@ -529,9 +525,9 @@ public class StudentServices {
             File dataFolder = new File(Constants.DATA_STORAGE_FOLDER);
             if (!dataFolder.exists()) {
                 createDataFolderThenSave();
-            } else {
-                exception.printStackTrace();
+                return;
             }
+            exception.printStackTrace();
         }
     }
 

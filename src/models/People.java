@@ -1,8 +1,9 @@
 package models;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class People {
+public class People implements Serializable {
     private static int nextId = 1;
     private Integer id;
     private String name;
