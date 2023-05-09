@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,73 +24,143 @@ public class StudentServices {
         }
     }
 
-    public void createStudent() {
+    private String getStudentName() {
         String name;
-        String dateOfBirth;
-        String address;
-        String height;
-        String weight;
-        String studentId;
-        String university;
-        String startYear;
-        String GPA;
-
         do {
             System.out.print("Enter student's name: ");
             name = scanner.nextLine();
         } while (!Validator.validateName(name));
+        return name;
+    }
 
+    private LocalDate getStudentDOB() {
+        String dateOfBirth;
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT);
         do {
             System.out.print("Enter student's date of birth ( " + Constants.DATE_FORMAT + " ): ");
             dateOfBirth = scanner.nextLine();
-        } while (!Validator.validateDateOfBirth(dateOfBirth));
+            try {
+                LocalDate parsedDate = LocalDate.parse(dateOfBirth, dateFormatter);
+                System.out.println(parsedDate);
+                if (Validator.validateDateOfBirth(dateOfBirth, parsedDate))
+                    return parsedDate;
+            } catch (DateTimeParseException e) {
+                System.out.println("Date of birth is not in the correct format.");
+            }
+        } while (true);
+    }
 
+
+    private String getStudentAddress() {
+        String address;
         do {
             System.out.print("Enter student's address: ");
             address = scanner.nextLine();
         } while (!Validator.validateAddress(address));
+        return address;
+    }
 
+    private float getStudentHeight() {
+        String height;
         do {
             System.out.print("Enter student's height: ");
             height = scanner.nextLine();
-        } while (!Validator.validateHeight(height));
+            try {
+                float heightInFloat = Float.parseFloat(height);
+                if (Validator.validateHeight(heightInFloat))
+                    return heightInFloat;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid height. Please enter a valid number.");
+            }
+        } while (true);
+    }
 
+    private float getStudentWeight() {
+        String weight;
         do {
             System.out.print("Enter student's weight: ");
             weight = scanner.nextLine();
-        } while (!Validator.validateWeight(weight));
+            try {
+                float weightInFloat = Float.parseFloat(weight);
+                if (Validator.validateWeight(weightInFloat))
+                    return weightInFloat;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid weight. Please enter a valid number.");
+            }
+        } while (true);
+    }
 
+    private String getStudentID() {
+        String studentId;
         do {
             System.out.print("Enter student's ID: ");
             studentId = scanner.nextLine();
         } while (!Validator.validateStudentId(studentId));
+        return studentId;
+    }
 
+    private String getStudentUniversity() {
+        String university;
         do {
             System.out.print("Enter student's university: ");
             university = scanner.nextLine();
         } while (!Validator.validateUniversity(university));
+        return university;
+    }
 
+    private int getStudentStartYear() {
+        String startYearStr;
+        int startYear;
         do {
             System.out.print("Enter student's start year: ");
-            startYear = scanner.nextLine();
-        } while (!Validator.validateStartYear(startYear));
+            startYearStr = scanner.nextLine().trim();
+            try {
+                startYear = Integer.parseInt(startYearStr);
+                if (Validator.validateStartYear(startYear))
+                    return startYear;
+            } catch (NumberFormatException e) {
+                System.out.println("Start year must be a number only.");
+            }
+        } while (true);
+    }
 
+
+    private float getStudentGPA() {
+        String GPA;
         do {
             System.out.print("Enter student's GPA: ");
             GPA = scanner.nextLine();
-        } while (!Validator.validateGPA(GPA));
+            try {
+                float gpaValue = Float.parseFloat(GPA);
+                if (Validator.validateGPA(gpaValue))
+                    return gpaValue;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid GPA format! GPA must be a number.");
+            }
+        } while (true);
+    }
 
-        DateTimeFormatter dateOfBirthFormatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT);
+
+    public void createStudent() {
+        String name = getStudentName();
+        LocalDate dateOfBirth = getStudentDOB();
+        String address = getStudentAddress();
+        float height = getStudentHeight();
+        float weight = getStudentWeight();
+        String studentId = getStudentID();
+        String university = getStudentUniversity();
+        int startYear = getStudentStartYear();
+        float gpa = getStudentGPA();
+
         Student student = new Student(name,
-                LocalDate.parse(dateOfBirth,
-                        dateOfBirthFormatter),
+                dateOfBirth,
                 address,
-                Float.valueOf(height),
-                Float.valueOf(weight),
+                height,
+                weight,
                 studentId,
                 university,
-                Integer.valueOf(startYear),
-                Float.valueOf(GPA));
+                startYear,
+                gpa);
 
         student.setPerformanceLevel(
                 calculatePerformanceLevel(student.getGPA())
@@ -141,110 +212,168 @@ public class StudentServices {
         if (studentToUpdate == null) return;
 
         System.out.println("Enter fields to update ( Press Enter to remain old value )");
+
+        updateName(studentToUpdate);
+        updateDateOfBirth(studentToUpdate);
+        updateAddress(studentToUpdate);
+        updateUniversity(studentToUpdate);
+        updateStartYear(studentToUpdate);
+        updateHeight(studentToUpdate);
+        updateWeight(studentToUpdate);
+        updateGPA(studentToUpdate);
+
+
+        System.out.println("Student's records updated!");
+        System.out.println(studentToUpdate);
+    }
+
+    private void updateName(Student studentToUpdate) {
         while (true) {
             System.out.print("Name (" + studentToUpdate.getName() + "): ");
             String name = scanner.nextLine().trim();
             if (name.isEmpty()) {
                 System.out.println("Skipping Name field...");
                 break;
-            } else if (Validator.validateName(name)) {
+            }
+            if (Validator.validateName(name)) {
                 studentToUpdate.setName(name);
                 break;
             }
         }
+    }
 
+    private void updateDateOfBirth(Student studentToUpdate) {
         while (true) {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT);
             System.out.print("Date of Birth (" + Constants.DATE_FORMAT + ") (" + studentToUpdate.getDateOfBirth().format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)) + "): ");
             String dobString = scanner.nextLine().trim();
             if (dobString.isEmpty()) {
                 System.out.println("Skipping Date of Birth field...");
                 break;
-            } else if (Validator.validateDateOfBirth(dobString)) {
-                LocalDate dob = LocalDate.parse(dobString, DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
-                studentToUpdate.setDateOfBirth(dob);
-                break;
+            }
+            try {
+                LocalDate parsedDate = LocalDate.parse(dobString, dateFormatter);
+                LocalDate dateOfBirth = LocalDate.parse(dobString, DateTimeFormatter.ofPattern(Constants.DATE_FORMAT));
+                if (Validator.validateDateOfBirth(dobString, parsedDate)) {
+                    studentToUpdate.setDateOfBirth(dateOfBirth);
+                    break;
+                }
+            } catch (DateTimeParseException e) {
+                System.out.println("Date of birth is not in the correct format.");
             }
         }
+    }
 
+    private void updateAddress(Student studentToUpdate) {
         while (true) {
             System.out.print("Address (" + studentToUpdate.getAddress() + "): ");
             String address = scanner.nextLine().trim();
             if (address.isEmpty()) {
                 System.out.println("Skipping Address field...");
                 break;
-            } else if (Validator.validateAddress(address)) {
+            }
+            if (Validator.validateAddress(address)) {
                 studentToUpdate.setAddress(address);
                 break;
             }
         }
+    }
 
+    private void updateUniversity(Student studentToUpdate) {
         while (true) {
             System.out.print("University (" + studentToUpdate.getUniversity() + "): ");
             String university = scanner.nextLine().trim();
             if (university.isEmpty()) {
                 System.out.println("Skipping University field...");
                 break;
-            } else if (Validator.validateUniversity(university)) {
+            }
+            if (Validator.validateUniversity(university)) {
                 studentToUpdate.setUniversity(university);
                 break;
             }
         }
+    }
 
+    private void updateStartYear(Student studentToUpdate) {
         while (true) {
             System.out.print("Start Year (" + studentToUpdate.getStartYear() + "): ");
             String startYearString = scanner.nextLine().trim();
             if (startYearString.isEmpty()) {
                 System.out.println("Skipping Start Year field...");
                 break;
-            } else if (Validator.validateStartYear(startYearString)) {
-                int startYear = Integer.parseInt(startYearString);
-                studentToUpdate.setStartYear(startYear);
-                break;
+            }
+            try {
+                Integer startYear = Integer.parseInt(startYearString);
+                if (Validator.validateStartYear(startYear)) {
+                    studentToUpdate.setStartYear(startYear);
+                    break;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Start year must be a number only.");
             }
         }
+    }
 
+    private void updateHeight(Student studentToUpdate) {
         while (true) {
             System.out.print("Height (" + studentToUpdate.getHeight() + "): ");
             String heightString = scanner.nextLine().trim();
             if (heightString.isEmpty()) {
                 System.out.println("Skipping Height field...");
                 break;
-            } else if (Validator.validateHeight(heightString)) {
-                float height = Float.parseFloat(heightString);
-                studentToUpdate.setHeight(height);
-                break;
+            }
+            try {
+                float heightInFloat = Float.parseFloat(heightString);
+                if (Validator.validateHeight(heightInFloat)) {
+                    studentToUpdate.setHeight(heightInFloat);
+                    break;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid height. Please enter a valid number.");
             }
         }
+    }
 
+    private void updateWeight(Student studentToUpdate) {
         while (true) {
             System.out.print("Weight (" + studentToUpdate.getWeight() + "): ");
             String weightString = scanner.nextLine().trim();
             if (weightString.isEmpty()) {
                 System.out.println("Skipping Weight field...");
                 break;
-            } else if (Validator.validateWeight(weightString)) {
-                float weight = Float.parseFloat(weightString);
-                studentToUpdate.setWeight(weight);
-                break;
+            }
+            try {
+                float weightInFloat = Float.parseFloat(weightString);
+                if (Validator.validateWeight(weightInFloat)) {
+                    studentToUpdate.setWeight(weightInFloat);
+                    break;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid weight. Please enter a valid number.");
             }
         }
+    }
 
+    private void updateGPA(Student studentToUpdate) {
         while (true) {
             System.out.print("GPA (" + studentToUpdate.getGPA() + "): ");
             String GPAString = scanner.nextLine().trim();
             if (GPAString.isEmpty()) {
                 System.out.println("Skipping GPA field...");
                 break;
-            } else if (Validator.validateGPA(GPAString)) {
-                float GPA = Float.parseFloat(GPAString);
-                studentToUpdate.setGPA(GPA);
-                studentToUpdate.setPerformanceLevel(calculatePerformanceLevel(GPA));
-                break;
+            }
+            try {
+                float gpaValue = Float.parseFloat(GPAString);
+                if (Validator.validateGPA(gpaValue)) {
+                    float GPA = Float.parseFloat(GPAString);
+                    studentToUpdate.setGPA(GPA);
+                    studentToUpdate.setPerformanceLevel(calculatePerformanceLevel(GPA));
+                    break;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid GPA format! GPA must be a number.");
             }
         }
-
-        System.out.println("Student's records updated!");
-        System.out.println(studentToUpdate);
     }
 
 
